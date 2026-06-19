@@ -1,5 +1,6 @@
 import { ChecklistsWrapper } from "./components/checklists-wrapper/checklists-wrapper";
 import { Container } from "./components/container/container";
+import { Dialog } from "./components/dialog/dialog";
 import { FabButton } from "./components/fab-button/fab-button";
 import { Footer } from "./components/footer/footer";
 import { Header } from "./components/header/header";
@@ -59,19 +60,26 @@ function App() {
             <IconSchool /> Plano de estudos
           </Heading>
         </Header>
+
+        <Dialog />
+
         <ChecklistsWrapper>
           <SubHeading>Para estudar</SubHeading>
+
           <ToDoList>
             {todos.map(function (t) {
               return <ToDoItem key={t.id} item={t} />;
             })}
           </ToDoList>
+
           <SubHeading>Concluído</SubHeading>
+
           <ToDoList>
             {completed.map(function (t) {
               return <ToDoItem key={t.id} item={t} />;
             })}
           </ToDoList>
+
           <Footer>
             <FabButton>
               <IconPlus />
