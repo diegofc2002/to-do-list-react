@@ -12,7 +12,7 @@ import { ToDoItem } from "./components/to-do-item/to-do-item";
 import { ToDoList } from "./components/to-do-list/to-do-list";
 import { ToDoForm } from "./components/to-do-form/to-do-form";
 
-const todos = [
+/* const todos = [
   {
     id: 1,
     description: "JSX e componentes",
@@ -51,18 +51,61 @@ const completed = [
     completed: true,
     createdAt: "2022-10-31",
   },
-];
+]; */
 
 function App() {
   const [show_dialog, set_show_dialog] = useState(false);
+  const [to_dos, set_to_dos] = useState([
+    {
+      id: 1,
+      description: "JSX e componentes",
+      completed: false,
+      createdAt: "2022-10-31",
+    },
+    {
+      id: 2,
+      description: "Controle de inputs e formulários controlados",
+      completed: true,
+      createdAt: "2022-10-31",
+    },
+  ]);
 
   const toggle_dialog = () => {
     set_show_dialog(!show_dialog);
   };
 
-  const add_to_do = () => {
-    console.log("Precisamos adicionar um novo ToDo");
+  const add_to_do = (formData) => {
+    const description = formData.get("description");
+    set_to_dos((prevState) => {
+      const to_do = {
+        id: prevState.length + 1,
+        description: description,
+        completed: false,
+        createdAt: new Date().toISOString(),
+      };
+      return [...prevState, to_do];
+    });
     toggle_dialog();
+  };
+
+  const toggle_to_do_completed = (item_to_do) => {
+    set_to_dos((prevState) => {
+      return prevState.map((t) => {
+        if (t.id == item_to_do.id) {
+          return {
+            ...t,
+            completed: !t.completed,
+          };
+        }
+        return t;
+      });
+    });
+  };
+
+  const delete_to_do = (item_to_do) => {
+    set_to_dos((prevState) => {
+      return prevState.filter((t) => t.id != item_to_do.id);
+    });
   };
 
   return (
@@ -78,17 +121,35 @@ function App() {
           <SubHeading>Para estudar</SubHeading>
 
           <ToDoList>
-            {todos.map(function (t) {
-              return <ToDoItem key={t.id} item={t} />;
-            })}
+            {to_dos
+              .filter((t) => !t.completed) // 't' = to-dos
+              .map(function (t) {
+                return (
+                  <ToDoItem
+                    key={t.id}
+                    item={t}
+                    on_toggle_completed={toggle_to_do_completed}
+                    on_delete_to_do={delete_to_do}
+                  />
+                );
+              })}
           </ToDoList>
 
           <SubHeading>Concluído</SubHeading>
 
           <ToDoList>
-            {completed.map(function (t) {
-              return <ToDoItem key={t.id} item={t} />;
-            })}
+            {to_dos
+              .filter((t) => t.completed)
+              .map(function (t) {
+                return (
+                  <ToDoItem
+                    key={t.id}
+                    item={t}
+                    on_toggle_completed={toggle_to_do_completed}
+                    on_delete_to_do={delete_to_do}
+                  />
+                );
+              })}
           </ToDoList>
 
           <Footer>
