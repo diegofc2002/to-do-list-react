@@ -2,35 +2,43 @@ import React, { useEffect, useRef } from "react";
 import "./dialog.style.css";
 import { IconClose } from "../icons/icons";
 
-export function Dialog({ is_open, on_close, children }) {
+export function Dialog({ isOpen, onClose, children }) {
   // Não deveríamos fazer buscar no DOM desta maneira:
   /* const dialog = document.querySelector("dialog"); */
 
-  const dialog_ref = useRef(null);
+  const dialogRef = useRef(null);
 
   useEffect(() => {
-    if (is_open) {
-      open_dialog();
+    if (isOpen) {
+      openDialog();
     } else {
-      close_dialog();
+      closeDialog();
     }
-  }, [is_open]);
+  }, [isOpen]);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    dialog?.addEventListener("close", onClose);
+    return () => {
+      dialog?.removeEventListener("close", onClose);
+    };
+  }, [onClose]);
 
   // "Show the dialog" button opens the dialog modally
-  const open_dialog = () => {
-    dialog_ref.current.showModal();
+  const openDialog = () => {
+    dialogRef.current.showModal();
   };
 
   // "Close" button closes the dialog
-  const close_dialog = () => {
-    dialog_ref.current.close();
+  const closeDialog = () => {
+    dialogRef.current.close();
   };
 
   return (
     <>
-      <dialog ref={dialog_ref} className="dialog">
+      <dialog ref={dialogRef} className="dialog">
         <div className="btn-close-wrapper">
-          <button autoFocus onClick={on_close} className="btn-close">
+          <button autoFocus onClick={onClose} className="btn-close">
             <IconClose />
           </button>
         </div>
